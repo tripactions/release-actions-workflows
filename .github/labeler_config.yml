@@ -4,15 +4,18 @@ labels:
     size-above: 300
     files:
       - ".*?/src/main/java/.*"
+
   - label: "db-changes"
     files:
       - ".*/db/changelog/.*"
       - ".*/db.changelog/.*"
       - ".*/db*changelog/.*"
+
   - label: "ta-fe-company"
     files:
       - "apps/ta-fe-company/.*"
       - "libs/.*"
+
   - label: "ta-fe-user"
     files:
       - "apps/ta-fe-user/.*"
@@ -20,10 +23,12 @@ labels:
       - "libs/.*"
       - "package.json"
       - "package-lock.json"
+
   - label: "ta-fe-team-event"
     files:
       - "apps/team-event/.*"
       - "libs/.*"
+
   - label: "ta-fe-helpcenter"
     files:
       - "apps/ta-fe-helpcenter/.*"

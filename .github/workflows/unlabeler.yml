@@ -1,0 +1,26 @@
+name: Save unlabeled state
+on:
+  pull_request:
+    types: [ unlabeled ]
+jobs:
+  unlabeled:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.label.name == 'auto-risky' }}
+    steps:
+      - name: "Create unlabeled status"
+        run: |
+          echo "UNLABELED" > .unlabeled_status
+      - name: Check if artifact is already presented
+        id: already_presented
+        continue-on-error: true
+        run: |
+           curl -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/${{ github.repository }}/actions/artifacts | jq -e -r '.artifacts[] | select(.name=="${{ github.event.number }}-unlabeled-status")|.id'
+      - name: Upload unlabled status
+        if: steps.already_presented.outcome == 'failure'
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ github.event.number }}-unlabeled-status
+          path: .unlabeled_status
