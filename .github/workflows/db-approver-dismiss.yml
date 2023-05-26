@@ -1,0 +1,27 @@
+name: "Dismiss approvals for DB changes"
+on: [ pull_request ]
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v14.6
+      - name: List all changed files
+        continue-on-error: true
+        run: |
+          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+            if [[ ( $file =~ .*\/db\.changelog.* || $file =~ .*\/db\/changelog\/.* || $file =~ .*\/db.*changelog.*/ ) && ! $file =~ .*\/test\/.* ]]; then
+              exit 0
+            fi
+          done
+          exit 
+      - name: Dismiss code reviews from collaborators
+        uses: peckjon/reject-pr-approval-from-committer@1.0.2    
+        if: steps.is_db.outcome == 'failure'
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
